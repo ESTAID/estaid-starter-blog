@@ -1,0 +1,99 @@
+---
+date: "2019-08-12"
+title: "memory-leak-with-react"
+description: "React에서 비 동기 호출 시 메모리 누수 줄이는 방법 with Hooks"
+banner: "./images/banner.jpg"
+published: true
+---
+
+`React` 코드를 작성하면서 `state` 값을 비 동기로 변경하여 DOM의 노출 여부를 결정하는 사례는 일반적입니다. 아래 코드는 `Show` 버튼을 클릭하여 `Child` 컴포넌트가 렌더링 되면 2초 뒤에 `state`값을 변경하는 간단한 코드입니다. (비동기 호출은 `setTimeout`으로 대체합니다. 😀)
+
+```jsx
+function Child() {
+  const [state, setState] = React.useState("mount🙂")
+  React.useEffect(() => {
+    setTimeout(() => {
+      setState("update🙃")
+    }, 2000)
+  }, [])
+
+  return <div>{state}</div>
+}
+
+function App() {
+  const [view, setView] = React.useState(false)
+  const onShowClick = () => {
+    setView(true)
+  }
+  const onHideClick = () => {
+    setView(false)
+  }
+
+  return (
+    <div className="App">
+      <button onClick={onShowClick}>Show</button>
+      <button onClick={onHideClick}>Hide</button>
+      {view && <Child />}
+    </div>
+  )
+}
+```
+
+`Show`버튼을 클릭하면 `view` 상태 값이 `true`로 변경되면서 `App` 컴포넌트는 다시 렌더링 됩니다. 그리고 `Child` 컴포넌트가 렌더링 되고 DOM을 그리고 `useEffect` 실행하고 그 안에 `setTimeout` 콜백 함수가 2초 뒤에 실행됩니다.
+
+위와 같은 로직이 정상 작동하면 문제가 없겠지만, `setTimeout`의 콜백 함수가 실행되기 전에 `Child`컴포넌트를 `unmount` 시킨다면 어떤 상황이 발생할까요? 콘솔 창에서는 이러한 문구가 등장합니다.
+
+> ⚠️ Warning: Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application. To fix, cancel all subscriptions and asynchronous tasks in a useEffect cleanup function.
+
+        in Child (created by App)
+
+위 `warning`에 토대로 `return` 함수에 상태 값을 변경을 취소하는 로직을 추가해봅시다. React에서 원하는 형태는 아마도 이러한 형태일거 같습니다.
+
+```jsx
+React.useEffect(() => {
+  // do something
+  return () => // cancelling state
+}
+```
+
+`setTimeout` 의 경우 `clearTimeout`을 사용하여 아래와 같이 제어가 가능합니다.
+
+```jsx
+// Child Component
+React.useEffect(() => {
+  const timer = setTimeout(() => {
+    setState("update🙃")
+  }, 2000)
+
+  return () => {
+    clearTimeout(timer)
+  }
+}, [])
+```
+
+비 동기 호출의 예제를 위해 `setTimeout`를 사용했지만 서버에서 데이터를 가져올 경우에는 상황이 다릅니다. `axios`를 사용해서 데이터를 가져올 경우 콜백 함수를 비우는 `clearTimeout`이라는 함수가 없기 때문입니다.
+
+`axios` 같은 경우 요청이 완료하기 전에 컴포넌트가 `unmount`되는 경우 `cancelToken`[[링크]](https://github.com/axios/axios#cancellation) 을 이용해 요청을 취소하거나 `useRef`를 사용해 처리할 수도 있지만, 좀 더 간단히 작성하는 방법은 `clusure`를 이용하는 법입니다.
+
+```jsx
+// Child Component
+React.useEffect(() => {
+  let isSubscribed = true
+
+  setTimeout(() => {
+    if (isSubscribed) {
+      setState("update🙃")
+    }
+  }, 1000)
+
+  return () => {
+    isSubscribed = false
+  }
+}, [])
+```
+
+로직이 돌아가는 과정을 설명하면, 기존 동작 과정은 동일하지만 `isSubscribed`라는 변수가 추가 되었습니다. `isSubscribed` 변수를 통해 `state` 상태 값을 변경할지 결정합니다. `unmount`가 되는 순간 `isSubscribed`는 `false`로 값이 변경되고 상태 값을 변경하지 않습니다.
+
+위와 같은 방법으로 비 동기 호출 시 메모리 누수를 줄일 수 있었습니다. 전체 코드는 아래의 링크에서 확인할 수 있습니다.
+
+[Memory leak with React - CodeSandbox](https://codesandbox.io/s/memory-leak-with-react-oyybw)

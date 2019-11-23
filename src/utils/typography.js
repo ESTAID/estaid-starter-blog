@@ -1,20 +1,36 @@
 import Typography from "typography"
-import Wordpress2016 from "typography-theme-wordpress-2016"
 
-Wordpress2016.overrideThemeStyles = () => {
-  return {
-    "a.gatsby-resp-image-link": {
-      boxShadow: `none`,
+const typography = new Typography({
+  baseFontSize: "17px",
+  baseLineHeight: 1.55,
+  headerLineHeight: 1.4,
+  headerFontFamily: ["montserrat", "sans-serif"],
+  bodyFontFamily: ["montserrat", "sans-serif"],
+  headerColor: "hsla(0,0%,0%,0.9)",
+  bodyColor: "hsla(0,0%,0%,0.8)",
+
+  overrideStyles: ({ rhythm }) => ({
+    h1: {
+      color: "hsla(0,0%,0%,0.75)",
     },
-  }
-}
-
-delete Wordpress2016.googleFonts
-
-const typography = new Typography(Wordpress2016)
-
+    h2: {
+      color: "hsla(0,0%,0%,0.775)",
+    },
+    h3: {
+      color: "hsla(0,0%,0%,0.8)",
+    },
+    "h1,h2,h3,h4,h5,h6": {
+      lineHeight: 1,
+    },
+    "h1,h2,h3,h4": {
+      lineHeight: 1.25,
+      marginTop: rhythm(1),
+      marginBottom: rhythm(1 / 2),
+    },
+  }),
+})
 // Hot reload typography in development.
-if (process.env.NODE_ENV !== `production`) {
+if (process.env.NODE_ENV !== "production") {
   typography.injectStyles()
 }
 

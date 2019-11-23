@@ -1,0 +1,9 @@
+@import "../../styles/colors.scss";
+@import "../../styles/breakpoints.scss";
+
+.banner {
+  padding: 30px;
+  @media (max-width: $minMD - 1px) {
+    padding: 0;
+  }
+}

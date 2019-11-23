@@ -1,17 +1,20 @@
 import React from "react"
-import { Link, graphql } from "gatsby"
+import { graphql } from "gatsby"
+import { MDXRenderer } from "gatsby-plugin-mdx"
 
-import Bio from "../components/bio"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
+import Banner from "../components/banner"
 import { rhythm, scale } from "../utils/typography"
+
+import "../styles/code.scss"
 
 class BlogPostTemplate extends React.Component {
   render() {
-    const post = this.props.data.markdownRemark
+    const post = this.props.data.mdx
     const siteTitle = this.props.data.site.siteMetadata.title
-    const { previous, next } = this.props.pageContext
-
+    const banner = post.frontmatter.banner
+    console.log(banner)
     return (
       <Layout location={this.props.location} title={siteTitle}>
         <SEO
@@ -22,6 +25,7 @@ class BlogPostTemplate extends React.Component {
           <header>
             <h1
               style={{
+                textAlign: "center",
                 marginTop: rhythm(1),
                 marginBottom: 0,
               }}
@@ -30,6 +34,7 @@ class BlogPostTemplate extends React.Component {
             </h1>
             <p
               style={{
+                textAlign: "center",
                 ...scale(-1 / 5),
                 display: `block`,
                 marginBottom: rhythm(1),
@@ -38,43 +43,10 @@ class BlogPostTemplate extends React.Component {
               {post.frontmatter.date}
             </p>
           </header>
-          <section dangerouslySetInnerHTML={{ __html: post.html }} />
-          <hr
-            style={{
-              marginBottom: rhythm(1),
-            }}
-          />
-          <footer>
-            <Bio />
-          </footer>
+          <Banner banner={banner} title={siteTitle} />
+          <br />
+          <MDXRenderer>{post.body}</MDXRenderer>
         </article>
-
-        <nav>
-          <ul
-            style={{
-              display: `flex`,
-              flexWrap: `wrap`,
-              justifyContent: `space-between`,
-              listStyle: `none`,
-              padding: 0,
-            }}
-          >
-            <li>
-              {previous && (
-                <Link to={previous.fields.slug} rel="prev">
-                  ← {previous.frontmatter.title}
-                </Link>
-              )}
-            </li>
-            <li>
-              {next && (
-                <Link to={next.fields.slug} rel="next">
-                  {next.frontmatter.title} →
-                </Link>
-              )}
-            </li>
-          </ul>
-        </nav>
       </Layout>
     )
   }
@@ -89,14 +61,21 @@ export const pageQuery = graphql`
         title
       }
     }
-    markdownRemark(fields: { slug: { eq: $slug } }) {
+    mdx(fields: { slug: { eq: $slug } }) {
       id
       excerpt(pruneLength: 160)
-      html
+      body
       frontmatter {
         title
         date(formatString: "MMMM DD, YYYY")
         description
+        banner {
+          childImageSharp {
+            fluid(maxWidth: 900) {
+              ...GatsbyImageSharpFluid_withWebp_tracedSVG
+            }
+          }
+        }
       }
     }
   }

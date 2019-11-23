@@ -1,0 +1,17 @@
+@import "../../styles/colors.scss";
+@import "../../styles/breakpoints.scss";
+
+.footer-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+
+  .footer-author {
+    color: $gray;
+    @media (max-width: $minMD - 1px) {
+      padding: 0;
+      font-size: 12px;
+    }
+  }
+}

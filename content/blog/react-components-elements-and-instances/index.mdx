@@ -1,0 +1,409 @@
+---
+slug: react-components-elements-and-instances
+date: 2019-08-12
+title: "React Components, Elements, and Instances"
+description: "React 컴포넌트, 엘리먼트, 그리고 인스턴스"
+published: true
+---
+
+[React Components, Elements, and Instances - React Blog](https://reactjs.org/blog/2015/12/18/react-components-elements-and-instances.html)
+
+대부분의 React 초급자는 컴포넌트, 인스턴스와 엘리먼트 차이점에 대해 혼란을 겪습니다.
+화면을 그리기 위해 왜 3가지 용어가 필요할까요?
+
+---
+
+# 인스턴스 관리
+
+만약 React를 처음 접하는 경우, 이전에 컴포넌트 클래스와 인스턴스로만 작업을 했을지도 모릅니다.
+예를 들어, 클래스로 작성된 `Button` 컴포넌트를 정의했다고 가정해봅시다.
+앱이 실행 중일 때 화면에 고유한 속성과 지역 상태 값을 가진 컴포넌트의 인스턴스가 여러 개 있을 수도 있습니다.
+이것은 전형적인 객체 지향 UI 프로그래밍입니다.
+그렇다면 왜 *엘리먼트*를 소개할까요?
+
+전형적인 UI 모델에서 자식 컴포넌트의 인스턴스를 생성하거나 삭제하는 것은 사용자 몫입니다.
+만약 `Form` 컴포넌트에서 `Button`컴포넌트를 렌더링하길 원한다면 인스턴스를 생성하고 새로운 정보를 사용하여 최신 상태를 유지해야 합니다.
+
+```javascript
+class Form extends TraditionalObjectOrientedView {
+  render() {
+    // Read some data passed to the view
+    const { isSubmitted, buttonText } = this.attrs
+
+    if (!isSubmitted && !this.button) {
+      // Form is not yet submitted. button 인스턴스 생성
+      this.button = new Button({
+        children: buttonText,
+        color: "blue",
+      })
+      this.el.appendChild(this.button.el)
+    }
+
+    if (this.button) {
+      // The button is visible. Update its text!
+      this.button.attrs.children = buttonText
+      this.button.render()
+    }
+
+    if (isSubmitted && this.button) {
+      // Form was submitted. Destroy the button!
+      this.el.removeChild(this.button.el)
+      this.button.destroy()
+    }
+
+    if (isSubmitted && !this.message) {
+      // Form was submitted. Show the success message!
+      this.message = new Message({ text: "Success!" })
+      this.el.appendChild(this.message.el)
+    }
+  }
+}
+```
+
+위는 수도 코드이지만, Backbone과 같은 라이브러리를 사용하여 객체 지향 방식으로 일관성 있게 작동하는 복잡한 UI 코드를 작성할 때 나타나는 결과 물입니다.
+
+각 컴포넌트 인스턴스는 해당 DOM 노드 및 자식 컴포넌트의 인스턴스에 대한 참조를 유지해야 하며, 적절한 시점이 되면 이들을 생성, 수정 및 삭제해야 합니다.
+코드의 길이는 컴포넌트의 가능한 상태 값 개수의 제곱만큼 증가하고 부모는 직접 자식 컴포넌트 인스턴스에 접근이 가능하게 됩니다.
+향후 이는 부모와 자식을 떼어내는데 더 어렵게 만듭니다.
+
+React는 어떻게 다를까요?
+
+---
+
+# 엘리먼트는 트리를 묘사합니다
+
+React안에서는 **엘리먼트**가 위 문제점을 해결할 수 있습니다. **엘리먼트는 DOM 노드와 속성 혹은 컴포넌트 인스턴스를 표현한 기본 객체입니다.** 이 객체 안에는 오직 `Button`과 같은 컴포넌트 타입에 대한 정보나 `color`와 같은 타입에 대한 속성, 혹은 자식 엘리먼트에 대한 정보만 포함하고 있습니다.
+
+엘리먼트는 실제로 인스턴스가 아닙니다. 다시 말해서, 이는 화면에서 보고 싶은 것을 React에게 전달하는 방법입니다.
+엘리먼트에 대한 어떠한 메서드도 호출할 수 없습니다. 이는 단지 2개의 필드 값(`type: (string | ReactClass), props: Object`)을 가진 불변의 설명 객체입니다.
+
+# DOM 엘리먼트
+
+엘리먼트의 `type`이 문자열일때 이는 DOM 노드에게 태그명과 attribute와 일치하는 `props`를 넘겨줍니다. 아래 예제는 React가 렌더링하는 코드입니다.
+
+```js
+{
+  type: 'button',
+  props: {
+    className: 'button button-blue',
+    children: {
+      type: 'b',
+      props: {
+        children: 'OK!'
+      }
+    }
+  }
+}
+```
+
+위 엘리먼트는 다음 HTML을 일반 객체로 나타내는데 불과합니다.
+
+```js
+<button class="button button-blue">
+  <b>OK!</b>
+</button>
+```
+
+이제 엘리먼트가 어떻게 중첩 되는지 알아봅시다. 엘리먼트 트리를 작성하려는 경우,`children` prop를 포함한 엘리먼트로써 하나 이상의 하위 엘리먼트로 지정합니다.
+
+중요한 것은 자식과 부모 엘리먼트는 실제 *인스턴스*가 아닌 설명에 불과하다는 점입니다. 당신이 엘리먼트을 작성할 때 엘리먼트는 화면에 어떤 것도 참조하지 않습니다. 당신은 작성한 후 버릴 수 도 있고, 이 것은 별 문제가 없습니다.
+
+React 엘리먼트는 구문 분석할 필요가 없으며, 실제 DOM 엘리먼트보다 가볍습니다. React 엘리먼트는 단지 객체입니다!
+
+# 컴포넌트 엘리먼트
+
+엘리먼트의 `type`은 함수이거나 React 컴포넌트로 감싸진 클래스입니다.
+
+```js
+{
+  type: Button,
+  props: {
+    color: 'blue',
+    children: 'OK!'
+  }
+}
+```
+
+이것이 React의 핵심 아이디어입니다.
+
+**컴포넌트 엘리먼트를 설명하는 엘리먼트도 DOM 노드를 설명하는 엘리먼트와 마찬가지로 같은 엘리먼트입니다. 그들은 섞여 중첩될 수 있습니다.**
+
+이 기능을 사용하면 `Button`이 DOM `<button>`, `<div>` 또는 완전히 다른 것으로 렌더링 되는지 여부에 관계 없이 특정 `color` 속성 값을 가진 `Button`으로 `DangerButton` 컴포넌트를 정의할 수 있습니다.
+
+```jsx
+const DangerButton = ({ children }) => ({
+  type: Button,
+  props: {
+    color: "red",
+    children: children,
+  },
+})
+```
+
+단일 엘리먼트 트리안에서 컴포넌트 엘리먼트와 DOM을 일치(match) 시키고 혼합할 수 있습니다.
+
+```jsx
+  const DeleteAccount = () => ({
+    type: 'div',
+    props: {
+      children: [{
+        type: 'p',
+        props: {
+          children: 'Are you sure?'
+        }
+      }, {
+        type: DangerButton,
+        props: {
+          children: 'Yep'
+        }
+      }, {
+        type: Button,
+        props: {
+          color: 'blue',
+          children: 'Cancel'
+        }
+      }]
+  });
+```
+
+JSX를 사용하면 다음과 같습니다.
+
+```jsx
+const DeleteAccount = () => (
+  <div>
+    <p>Are you sure?</p>
+    <DangerButton>Yep</DangerButton>
+    <Button color="blue">Cancel</Button>
+  </div>
+)
+```
+
+혼합 및 매칭(matching)하는 것은 각각의 컴포넌트를 서로 분리하는데 도움을 줍니다. 구성만으로 *is-a*와 _has-a_ 관계를 모두 표현할 수 있기 때문입니다.
+
+- `Button`은 구체적인 속성을 가진 DOM `<button>`입니다.
+- `DangerButton`은 구체적인 속성을 가진 `Button`입니다.
+- `DeleteAccount`는 `<div>`안에서 `Button`과 `DangerButton`을 포함하고 있습니다.
+
+# 컴포넌트는 엘리먼트 트리를 캡슐화합니다
+
+React가 클래스 `type` 또는 함수를 가진 엘리먼트를 볼 때, 엘리먼트가 가진 `props` 중 어떤 것을 렌더링할 지 컴포넌트에게 물어봅니다.
+
+엘리먼트를 볼때,
+
+```js
+{
+  type: Button,
+  props: {
+    color: 'blue',
+    children: 'OK!'
+  }
+}
+```
+
+React는 `Button`에게 무엇을 렌더링할지 물어봅니다. 그리고 `Button`은 엘리먼트를 반환합니다.
+
+```js
+{
+  type: 'button',
+  props: {
+    className: 'button button-blue',
+    children: {
+      type: 'b',
+      props: {
+        children: 'OK!'
+      }
+    }
+  }
+}
+```
+
+React는 페이지의 모든 컴포넌트에 대한 DOM 태그 엘리먼트를 알 때까지 이 과정을 반복합니다.
+
+React는 마치 아이들이 세상의 작은 모든 것을 알아낼 때까지 설명해주는 "X는Y야"에 대해 "그럼 Y는 뭐야?"라고 묻는 것과 같습니다.
+
+위 `Form` 예제를 기억하시나요? 다음과 같이 React로 작성할 수 있습니다.
+
+```jsx
+const Form = ({ isSubmitted, buttonText }) => {
+  if (isSubmitted) {
+    // Form submitted! Return a message element.
+    return {
+      type: Message,
+      props: {
+        text: "Success!",
+      },
+    }
+  }
+
+  // Form is still visible! Return a button element.
+  return {
+    type: Button,
+    props: {
+      children: buttonText,
+      color: "blue",
+    },
+  }
+}
+```
+
+끝입니다! React 컴포넌트에서 props는 입력 값이고 엘리먼트 트리는 출력 값입니다.
+
+**반환된 엘리먼트 트리는 DOM 노드를 설명하는 엘리먼트와 다른 컴포넌트를 설명하는 엘리먼트 모두 포함될 수 있습니다. 이는 내부의 DOM 구조에 의존하지 않고 독립적인 UI 파트를 구성할 수 있다는 것을 의미합니다.**
+
+React로 인스턴스를 생성, 수정, 삭제를 해봤습니다. 컴포넌트에서 반환된 엘리먼트가 포함된 인스턴스를 설명하고 React는 해당 인스턴스를 관리합니다.
+
+# 컴포넌트는 클래스 또는 함수가 되어야 합니다
+
+위 코드에서, `Form`, `Message`, 그리고 `Button`은 React 컴포넌트입니다. 이 컴포넌트들은 위와 같이 함수로 작성하거나 `React.Component`로 부터 위임받은 class로 작성할 수 있습니다. 컴포넌트를 선언하는 세 가지 방법은 대부분 동일합니다.
+
+```jsx
+// 1) 함수를 사용하는 방법
+const Button = ({ children, color }) => ({
+  type: "button",
+  props: {
+    className: "button button-" + color,
+    children: {
+      type: "b",
+      props: {
+        children: children,
+      },
+    },
+  },
+})
+
+// 2) React.createClass()를 사용하는 방법
+const Button = React.createClass({
+  render() {
+    const { children, color } = this.props
+    return {
+      type: "button",
+      props: {
+        className: "button button-" + color,
+        children: {
+          type: "b",
+          props: {
+            children: children,
+          },
+        },
+      },
+    }
+  },
+})
+
+// 3) React.Component class를 사용하는 방법
+class Button extends React.Component {
+  render() {
+    const { children, color } = this.props
+    return {
+      type: "button",
+      props: {
+        className: "button button-" + color,
+        children: {
+          type: "b",
+          props: {
+            children: children,
+          },
+        },
+      },
+    }
+  }
+}
+```
+
+컴포넌트를 클래스로 정의할 때 함수형 컴포넌트보다 좀 더 다양한 기능을 가질 수 있습니다. 클래스형 컴포넌트는 지역 상태 값을 저장할 수 있고 DOM 노드가 생성되거나 삭제될 때 사용자가 정의한 로직을 수행할 수 있습니다.
+
+함수형 컴포넌트는 기능은 별로 없지만 간단하고 하나의 `render()`메서드로 클래스형 컴포넌트처럼 작동합니다. 클래스에서만 사용할 수 있는 기능이 필요하지 않은 경우, 함수형 컴포넌트로 사용하길 권장합니다.
+
+**함수형이거나 클래스형과 상관 없이 그들은 개념적으로 모두 React 컴포넌트입니다. 입력 값으로 prop를 가질 수 있고 출력 값으로 엘리먼트를 반환합니다.**
+
+# 하향식(Top-Down) 재조정
+
+함수를 실행할 때
+
+```jsx
+ReactDOM.render(
+  {
+    type: Form,
+    props: {
+      isSubmitted: false,
+      buttonText: "OK!",
+    },
+  },
+  document.getElementById("root")
+)
+```
+
+React는 `props`를 고려해서 `Form`컴포넌트에게 어떤 엘리먼트 트리를 반환할지 물어볼 것입니다. 이것은 점차적으로 더 원초적인 측면에서 컴포넌트 트리를 이해하는데 도움을 줄 것입니다.
+
+```js
+// React: You told me this...
+{
+  type: Form,
+  props: {
+    isSubmitted: false,
+    buttonText: 'OK!'
+  }
+}
+
+// React: ...And Form told me this...
+{
+  type: Button,
+  props: {
+    children: 'OK!',
+    color: 'blue'
+  }
+}
+
+// React: ...and Button told me this! I guess I'm done.
+{
+  type: 'button',
+  props: {
+    className: 'button button-blue',
+    children: {
+      type: 'b',
+      props: {
+        children: 'OK!'
+      }
+    }
+  }
+}
+```
+
+이것은 `ReactDOM.render()`또는 `setState()`를 호출할 때 시작되는 React 프로세스의 일부인 `재조정(reconciliation)`의 과정입니다. 재조정이 끝날 무렵에 React는 DOM트리 결과물를 알고 `react-dom` 또는 `react-native`와 같은 렌더러는 DOM을 업데이트하는데 필요한 최소한의 변경사항을 적용합니다.
+
+이러한 점진적인 개선 프로세스가 React 앱을 최적화 하기 쉬운 이유이기도 합니다. 만약 컴포넌트 트리가 너무 커져서 React가 효율적으로 방문하지 못 할 경우, ['refining'과 트리와 관련된 props가 변경되지 않을 경우 특정 부분의 차이를 건너뛸 수 있습니다.](https://ko.reactjs.org/docs/optimizing-performance.html) props가 불변일 경우 변화에 대한 계산은 굉장히 빠르기 때문에 React와 불변성은 함께 잘 작동합니다. 그리고 최소한의 노력으로 거대한 최적화를 제공할 수 있습니다.
+
+이 블로그의 주제와 달리 컴포넌트와 엘리먼트에 대한 얘기는 많지만, 인스턴스에 관한 얘기는 별로 없다는 걸 눈치챘을 수도 있습니다. 사실 인스턴스는 React보다 객체지향 UI 프레임워크에서 좀 더 중요한 역할을 합니다.
+
+클래스로 선언된 컴포넌트는 인스턴스를 가지고 있습니다. 그리고 사용자가 직접 인스턴스를 만들지 않고, React가 대신 만들어 줍니다. [부모 컴포넌트 인스턴스가 자식 컴포넌트 인스턴스에 접근하는 메커니즘은 존재하지만](https://ko.reactjs.org/docs/refs-and-the-dom.html) 이러한 메커니즘은 필수 작업(예를 들어 특정 필드에 포커싱하는 작업)에서만 사용되므로 일반적으로 피해야 합니다.
+
+React는 모든 클래스형 컴포넌트의 인스턴스 생성을 관리하기 때문에 함수와 지역 상태를 사용하여 객체 지향 방식으로 컴포넌트를 작성할 수 있습니다. 그 외 React 프로그래밍 모델에서 인스턴스는 그다지 중요하지 않으며 React 자체에서 관리됩니다.
+
+---
+
+# 요약
+
+*엘리먼트*는 DOM 노드 또는 기타 컴포넌트와 관련하여 화면에 표시할 항목을 설명하는 일반 객체입니다. 엘리먼트는 props 안에 다른 엘리먼트들을 포함하고 있습니다. 엘리먼트를 생성하는 것은 간단합니다. 이를 생성하고 나면 절대 변형이 되지 않습니다.
+
+*컴포넌트*는 몇 가지 다른 방법으로 선언될 수 있습니다. 컴포넌트는 `render()`라는 함수를 가진 클래스입니다. 간단한 경우엔 컴포넌트가 함수로 정의될 수 있습니다. 두 경우 모두 props로 입력 값을 가지고 출력 값으로 엘리먼트 트리를 가집니다.
+
+컴포넌트가 입력 값으로 props를 받을 때 특정 부모 컴포넌트는 `type`과 props를 가진 엘리먼트를 반환합니다. 이것은 사람들이 React가 부모에서 자식인 한 방향으로 흐른다고 말하는 이유입니다.
+
+*인스턴스*는 클래스형 컴포넌트에서 `this`라고 합니다. [이는 지역 상태를 저장하고 생명주기 이벤트를 실행하는데 유용합니다.](https://ko.reactjs.org/docs/react-component.html)
+
+함수형 컴포넌트는 인스턴스를 가지고 있지 않지만 클래스형 컴포넌트는 인스턴스를 가지고 있습니다. 그러나 사용자가 직접 컴포넌트 인스턴스를 생성할 필요가 없습니다. 이는 React에서 관리합니다.
+
+마지막으로 엘리먼트를 생성하기 위해 [React.createElement()](https://ko.reactjs.org/docs/react-api.html#react.createelement), [JSX](https://ko.reactjs.org/docs/jsx-in-depth.html), 또는 [element factory helper](https://reactjs.org/docs/react-api.html#react.createfactory)를 사용합니다. 실제 작성하는 코드안에서 엘리먼트를 순수 객체로 작성하지 마십시오.
+
+---
+
+# 추가 참고 목록
+
+- [React 엘리먼트 소개](https://reactjs.org/blog/2014/10/14/introducing-react-elements.html)
+- [React 엘리먼트 간소화](https://reactjs.org/blog/2015/02/24/streamlining-react-elements.html)
+- [React 가상DOM 용어](https://reactjs.org/docs/glossary.html)
+
+---
+
+1. 모든 React 엘리먼트는 보안상 이유로 객체에 선언된 추가 $$typeof: Symbol.for('react.element')필드가 필요합니다.
+이 블로그에서 엘리먼트를 위해 인라인으로 객체를 사용하지만, 실제로 엘리먼트에 $$typeof를 추가하거나 코드를 React.createElement() 또는 JSX로 변경하지 않는 코드는 제대로 실행되지 않습니다.

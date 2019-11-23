@@ -1,0 +1,15 @@
+module.exports = {
+  pathPrefix: "/",
+  siteTitle: "estaid.dev",
+  siteTitleAlt: "JavaScript 관련 개발 블로그입니다.",
+  siteTitleShort: "estaid.dev",
+  siteUrl: "https://estaid.dev",
+  siteLanguage: "en",
+  siteLogo: "content/assets/gatsby-icon.png",
+  siteDescription: "JavaScript 관련 개발 블로그입니다.",
+  author: "ESTAID",
+  ogLanguage: "en_US",
+  googleAnalyticsID: "estaid8052",
+  github: "https://github.com/ESTAID",
+  instagram: "https://www.instagram.com/_________ggun",
+}

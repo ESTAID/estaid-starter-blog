@@ -1,0 +1,14 @@
+@import "../../styles/colors.scss";
+@import "../../styles/breakpoints.scss";
+
+.container {
+  .main {
+    width: 100%;
+    margin: 0 auto;
+    max-width: 780px;
+    padding: 40px 40px 0px;
+    @media (max-width: $minMD - 1px) {
+      padding: 20px 20px;
+    }
+  }
+}

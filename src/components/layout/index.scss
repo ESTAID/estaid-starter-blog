@@ -1,0 +1,9 @@
+@import "../../styles/colors.scss";
+
+.layout {
+  background-color: #fdfdfd;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+}

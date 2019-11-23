@@ -1,0 +1,10 @@
+@import "../../styles/colors.scss";
+
+.social {
+  margin-left: 10px;
+
+  color: $black;
+  &:hover {
+    color: $gray;
+  }
+}
