@@ -1,1 +1,1 @@
-# 🚀 Go [https://estaid.dev](https://estaid.dev)
+# 🚀 Go [https://estaid.dev](http://bit.ly/37wpE7v)
