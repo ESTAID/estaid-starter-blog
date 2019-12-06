@@ -1,11 +1,11 @@
 ---
 date: "2019-08-16"
 title: "Deep dive: How do React hooks really work?"
-description: "어떻게 React hooks는 동작할까?"
+description: "[번역] Deep dive: How do React hooks really work?"
 published: true
 ---
 
-[Deep dive: How do React hooks really work? | Netlify](https://www.netlify.com/blog/2019/03/11/deep-dive-how-do-react-hooks-really-work/)
+> [Deep dive: How do React hooks really work? | Netlify](https://www.netlify.com/blog/2019/03/11/deep-dive-how-do-react-hooks-really-work/)의 번역 글입니다.
 
 [Hooks](https://ko.reactjs.org/docs/hooks-intro.html)는 본질적으로 UI에서의 부작용과 상태 동작(stateful _behavior_)을 캡슐화하는 간단한 방법입니다.
 Hooks는 [React에서 처음 소개되었고](https://www.youtube.com/watch?v=dpw9EHDh2bM)
@@ -338,6 +338,7 @@ Hooks의 첫번째 규칙은 [오직 최상위에서 Hooks를 호출해야 한�
 ["오직 React 함수 내에서 Hook을 호출해야 된다"](https://ko.reactjs.org/docs/hooks-rules.html#only-call-hooks-from-react-functions)라는 두 번째 규칙이 구현에 대한 필수 규칙은 아니지만, 이 규칙을 적용하여 상태 어떤 부분이 상태 관련 로직과 연관이 있는지 명확하게 구분하는 것이 좋습니다.
 
 # 결론
+
 React Hooks에 대해 알아봤습니다. 이제 [useRef를 one-liner로 구현하거나](https://www.reddit.com/r/reactjs/comments/aufijk/useref_is_basically_usestatecurrent_initialvalue_0/), [렌더 기능을 실제 JSX를 사용하여 DOM에 마운트하거나](https://www.npmjs.com/package/vdom), 28줄 짜리 React Hook에서 생략한 100만 가지의 다른 세부 정보를 구현할 수 있습니다.
 이 글을 통해 컨텍스트에서 클로저를 사용하는 방법에 대해 경험, React Hooks가 어떻게 작동하는지 설명하는 유용한 모델을 얻었기를 바랍니다.
 
