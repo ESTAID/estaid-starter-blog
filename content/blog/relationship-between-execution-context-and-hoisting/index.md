@@ -10,9 +10,7 @@ published: true
 
 실행 컨텍스트란 실행할 코드에 제공할 환경 정보들을 모아놓은 객체로서, 동일한 스코프에 있는 코드들을 실행할 때 필요한 환경 정보를 모아 컨텍스트를 구성하고, 이를 호출 스택(콜 스택)에 쌓아서 실행 순서를 보장합니다.
 
-
 ![banner](https://raw.githubusercontent.com/ESTAID/estaid-starter-blog/master/content/blog/relationship-between-execution-context-and-hoisting/images/screenshot.png)
-
 
 자바스크립트는 특정 실행 컨텍스트가 활성화되는 시점에 선언된 변수를 호이스팅하고, 외부 환경 정보를 구성하고, `this` 값을 설정하는 동작을 수행합니다.
 
