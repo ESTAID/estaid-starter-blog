@@ -148,3 +148,6 @@ multiply = function(x, y) {
 ## 참고
 
 `let`과 `const`는 실행 컨텍스트가 활성화되어 식별자 정보를 수집할 때 어떤 값도 가지고 있지 않지만, `var`는 `undefined`를 가지고 있기 때문에 `let`과 `const`를 선언되기 전에 접근하면 `reference error`가 발생하게 되는 것이고, `var` 변수가 선언되기 전에 접근하면 `undefined`라는 값을 반환하는 것입니다.
+
+
+[[2편: 실행 컨텍스트와 스코프 체인의 관계](http://bit.ly/2suxX3R)]으로 넘어가기
