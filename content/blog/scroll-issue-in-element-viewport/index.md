@@ -15,7 +15,7 @@ published: true
 - B 관심 키워드 클릭
 - B 관심 키워드가 viewport 밖으로 벗어남
 
-![viewport/issue-view-1](https://raw.githubusercontent.com/ESTAID/estaid-starter-blog/master/content/blog/scroll-issue-in-element-viewport/images/issue-view.gif)
+![viewport/issue-view-1](https://raw.githubusercontent.com/ESTAID/estaid-starter-blog/master/content/blog/scroll-issue-in-element-viewport/images/issue-view.gif?style=center)
 
 ## 원인
 
@@ -23,7 +23,7 @@ published: true
 
 그림으로 표현하면 다음과 같습니다.
 
-![screen](https://raw.githubusercontent.com/ESTAID/estaid-starter-blog/master/content/blog/scroll-issue-in-element-viewport/images/screen.png)
+![screen](https://raw.githubusercontent.com/ESTAID/estaid-starter-blog/master/content/blog/scroll-issue-in-element-viewport/images/screen.png?style=center)
 
 ## 시도 1(scrollIntoView)
 
@@ -43,7 +43,7 @@ const onClick = () => {
 
 부자연스러운 동작을 하는 재현 영상은 다음과 같습니다.
 
-![viewport/issue-view-2](https://raw.githubusercontent.com/ESTAID/estaid-starter-blog/master/content/blog/scroll-issue-in-element-viewport/images/issue-view-2.gif)
+![viewport/issue-view-2](https://raw.githubusercontent.com/ESTAID/estaid-starter-blog/master/content/blog/scroll-issue-in-element-viewport/images/issue-view-2.gif?style=center)
 
 ## 시도 2(getClientRects)
 
@@ -112,4 +112,4 @@ const Component = () => {
 
 ## 결과
 
-![solution](https://raw.githubusercontent.com/ESTAID/estaid-starter-blog/master/content/blog/scroll-issue-in-element-viewport/images/solution.gif)
+![solution](https://raw.githubusercontent.com/ESTAID/estaid-starter-blog/master/content/blog/scroll-issue-in-element-viewport/images/solution.gif?style=center)
