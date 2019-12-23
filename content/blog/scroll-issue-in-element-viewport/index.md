@@ -3,7 +3,7 @@ date: "2019-12-07"
 title: "viewport 안에서 엘리먼트 위치 이슈를 처리한 방법"
 description: "[이슈 리포트] 클릭 이벤트에서 발생한 스크롤 이슈"
 banner: "./images/banner.jpg"
-published: false
+published: true
 ---
 
 > 이벤트 발생 시 *특정 엘리먼트가 viewport 안에 위치하는 방법에 대해 정리하였습니다.*
