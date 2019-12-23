@@ -179,3 +179,8 @@ blockquote {
   padding: 10px;
   color: #484a4a;
 }
+
+img[src$="center"] {
+  display:block;
+  margin: 0 auto;
+}
