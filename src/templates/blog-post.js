@@ -14,7 +14,7 @@ class BlogPostTemplate extends React.Component {
     const post = this.props.data.mdx
     const siteTitle = this.props.data.site.siteMetadata.title
     const banner = post.frontmatter.banner
-    console.log(banner)
+
     return (
       <Layout location={this.props.location} title={siteTitle}>
         <SEO
