@@ -51,13 +51,14 @@ _(참고로 아래 두 가지 내부는 VariableEnviroment도 가지고 있습�
 ```javascript
 function foo(a) {
   // 수집 대상 1(매개변수)
-  console.log(a) // ?
-  var a // 수집 대상 2(변수 선언)
-  console.log(a) // ?
-  var a = 2 // 수집 대상 3(변수 선언)
-  console.log(a) // ?
+  console.log(a); // ?
+  var a; // 수집 대상 2(변수 선언)
+  console.log(a); // ?
+  var a = 2; // 수집 대상 3(변수 선언)
+  console.log(a); // ?
 }
-a(1)
+
+foo(1);
 ```
 
 이 형태를 호이스팅 개념을 도입하여 매개변수가 변수 선언/할당과 같다고 가정하여 변환한 상태로 바꿔보겠습니다.
@@ -66,30 +67,31 @@ a(1)
 
 ```javascript
 function foo() {
-  var a // 수집 대상 1
-  var a // 수집 대상 2
-  var a // 수집 대상 3
+  var a; // 수집 대상 1
+  var a; // 수집 대상 2
+  var a; // 수집 대상 3
 
-  a = 1 // 수집 대상 1에 대한 할당 부분
-  console.log(a) // 1
-  console.log(a) // 1
-  a = 2
-  console.log(a) // 2
+  a = 1; // 수집 대상 1에 대한 할당 부분
+  console.log(a); // 1
+  console.log(a); // 1
+  a = 2;
+  console.log(a); // 2
 }
-a(1)
+
+foo(1);
 ```
 
 이번엔 함수 호이스팅에 대한 예제를 보겠습니다.
 
 ```javascript
 function foo() {
-  console.lob(b) // ?
-  var b = "b" // 수집 대상 1
-  console.log(b) // ?
+  console.lob(b); // ?
+  var b = "b"; // 수집 대상 1
+  console.log(b); // ?
   function b() {} // 수집 대상 2
-  console.log(b) // ?
+  console.log(b); // ?
 }
-foo()
+foo();
 ```
 
 foo 함수를 실행하는 순간 foo 함수의 실행 컨텍스트가 생성됩니다. 변수는 선언부와 할당부를 나누어 선언부만 끌어올리는 반면 함수 선언은 함수 전체를 끌어올립니다. 이유는 자바스크립트의 창시자인 Brendan Eich가 선언하는 위치와 상관 없이 유연하고 배우기 쉬운 언어로 만들고자 했기 때문입니다.
@@ -98,13 +100,13 @@ foo 함수를 실행하는 순간 foo 함수의 실행 컨텍스트가 생성됩
 
 ```javascript
 function foo() {
-  var b
+  var b;
   function b() {}
 
-  console.log(b) // function b() {};
-  b = "b"
-  console.log(b) // b
-  console.log(b) // b
+  console.log(b); // function b() {};
+  b = "b";
+  console.log(b); // b
+  console.log(b); // b
 }
 ```
 
@@ -115,32 +117,32 @@ function foo() {
 예제를 통해 두 방식의 차이점에 대해 알아보겠습니다.
 
 ```javascript
-console.log(sum(1, 2))
-console.log(multiply(3, 4))
+console.log(sum(1, 2));
+console.log(multiply(3, 4));
 
 function sum(x, y) {
-  return x + y
+  return x + y;
 }
 
 var multiply = function(x, y) {
-  return x * y
-}
+  return x * y;
+};
 ```
 
 호이스팅이 마친 상태는 다음과 같습니다.
 
 ```javascript
 var sum = function(x, y) {
-  return x + y
-}
-var multiply
+  return x + y;
+};
+var multiply;
 
-console.log(sum(1, 2))
-console.log(multiply(3, 4))
+console.log(sum(1, 2));
+console.log(multiply(3, 4));
 
 multiply = function(x, y) {
-  return x * y
-}
+  return x * y;
+};
 ```
 
 함수 선언문은 함수 전체를 호이스팅하지만 함수 표현식은 변수 선언부만 호이스팅하고 변수의 할당부는 원래 자리에 남겨둡니다. 함수를 다른 변수에 값으로써 '할당'한 것이 곧 함수 표현식입니다.
@@ -148,6 +150,5 @@ multiply = function(x, y) {
 ## 참고
 
 `let`과 `const`는 실행 컨텍스트가 활성화되어 식별자 정보를 수집할 때 어떤 값도 가지고 있지 않지만, `var`는 `undefined`를 가지고 있기 때문에 `let`과 `const`를 선언되기 전에 접근하면 `reference error`가 발생하게 되는 것이고, `var` 변수가 선언되기 전에 접근하면 `undefined`라는 값을 반환하는 것입니다.
-
 
 [[2편: 실행 컨텍스트와 스코프 체인의 관계](http://bit.ly/2suxX3R)]으로 넘어가기
