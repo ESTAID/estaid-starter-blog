@@ -1,7 +1,7 @@
 ---
-date: "2019-08-16"
-title: "Deep dive: How do React hooks really work?"
-description: "[번역] Deep dive: How do React hooks really work?"
+date: '2019-08-16'
+title: 'Deep dive: How do React hooks really work?'
+description: '[번역] Deep dive: How do React hooks really work?'
 published: true
 ---
 
@@ -34,21 +34,21 @@ _클로저는 함수가 속한 렉시컬 스코프를 기억하여 함수가 렉
 ```jsx
 // 예제 0
 function useState(initialValue) {
-  var _val = initialValue // _val useState에 의해 생성된 로컬 변수입니다.
+  var _val = initialValue; // _val useState에 의해 생성된 로컬 변수입니다.
   function state() {
     // state함수는 클로저를 사용한 내부함수입니다.
-    return _val // 부모 함수에서 정의된 _val을 state()가 사용합니다.
+    return _val; // 부모 함수에서 정의된 _val을 state()가 사용합니다.
   }
   function setState(newVal) {
     // 같다.
-    _val = newVal // _val을 노출하지 않고 _val를 설정합니다.
+    _val = newVal; // _val을 노출하지 않고 _val를 설정합니다.
   }
-  return [state, setState] // 외부 사용을 위해 함수를 노출합니다.
+  return [state, setState]; // 외부 사용을 위해 함수를 노출합니다.
 }
-var [foo, setFoo] = useState(0) // 배열 구조 분해 할당을 사용합니다.
-console.log(foo()) // logs 0 - 최초의 initialValue
-setFoo(1) // useState 스코프 안에서 _val를 설정합니다.
-console.log(foo()) // logs 1 - 같은 함수를 호출하지만 새로운 initialValue를 반환합니다.
+var [foo, setFoo] = useState(0); // 배열 구조 분해 할당을 사용합니다.
+console.log(foo()); // logs 0 - 최초의 initialValue
+setFoo(1); // useState 스코프 안에서 _val를 설정합니다.
+console.log(foo()); // logs 1 - 같은 함수를 호출하지만 새로운 initialValue를 반환합니다.
 ```
 
 React `useState` hook의 기본적인 기능을 복사하였습니다. 함수 안에서 `state`와 `setState`라는 2개의 내부 함수가 있습니다. `state`는 위에 정의된 지역 변수 `_val`를 반환하고 `setState`는 인자로 받은 파라미터`newVal`을 지역 변수로 설정합니다.
@@ -65,16 +65,16 @@ React `useState` hook의 기본적인 기능을 복사하였습니다. 함수 �
 ```jsx
 // 예제 1
 function Counter() {
-  const [count, setCount] = useState(0) // 위에서 정의한 useState입니다.
+  const [count, setCount] = useState(0); // 위에서 정의한 useState입니다.
   return {
     click: () => setCount(count() + 1),
-    render: () => console.log("render:", { count: count() }),
-  }
+    render: () => console.log('render:', { count: count() }),
+  };
 }
-const C = Counter()
-C.render() // render: { count: 0 }
-C.click()
-C.render() // render: { count: 1 }
+const C = Counter();
+C.render(); // render: { count: 0 }
+C.click();
+C.render(); // render: { count: 1 }
 ```
 
 DOM을 렌더링하는 대신에, state를 `console.log`로 찍었습니다. 또한, 스크립트 안에서 동작해야 하기 때문에 이벤트 핸들러를 등록하는 대신 Counter를 위한 API 방식을 사용할 것입니다. 이 설계로 컴포넌트 렌더링과 사용자의 액션을 시뮬레이션할 수 있습니다.
@@ -88,17 +88,17 @@ DOM을 렌더링하는 대신에, state를 `console.log`로 찍었습니다. 또
 ```jsx
 // Example 0, 버그가 있는 코드!
 function useState(initialValue) {
-  var _val = initialValue
+  var _val = initialValue;
   // state() 함수가 없습니다.
   function setState(newVal) {
-    _val = newVal
+    _val = newVal;
   }
-  return [_val, setState] // 바로 _val를 리턴합니다.
+  return [_val, setState]; // 바로 _val를 리턴합니다.
 }
-var [foo, setFoo] = useState(0)
-console.log(foo) // logs 0 함수 호출 없이 사용할 수 있습니다.
-setFoo(1) // useState 스코프 안에서 _val를 설정합니다.
-console.log(foo) // logs 0 - 헉!!
+var [foo, setFoo] = useState(0);
+console.log(foo); // logs 0 함수 호출 없이 사용할 수 있습니다.
+setFoo(1); // useState 스코프 안에서 _val를 설정합니다.
+console.log(foo); // logs 0 - 헉!!
 ```
 
 이것은 진부한 클로저의 문제 중 일부입니다.
@@ -112,22 +112,22 @@ console.log(foo) // logs 0 - 헉!!
 ```jsx
 // Example 2
 const MyReact = (function() {
-  let _val // 모듈 스코프 안에서 클로저를 유지합니다.
+  let _val; // 모듈 스코프 안에서 클로저를 유지합니다.
   return {
     render(Component) {
-      const Comp = Component()
-      Comp.render()
-      return Comp
+      const Comp = Component();
+      Comp.render();
+      return Comp;
     },
     useState(initialValue) {
-      _val = _val || initialValue // 매번 실행할 때마다 새로운 값을 복사합니다.
+      _val = _val || initialValue; // 매번 실행할 때마다 새로운 값을 복사합니다.
       function setState(newVal) {
-        _val = newVal
+        _val = newVal;
       }
-      return [_val, setState]
+      return [_val, setState];
     },
-  }
-})()
+  };
+})();
 ```
 
 간단히 React를 복사하기 위해서 [모듈 패턴](https://addyosmani.com/resources/essentialjsdesignpatterns/book/#modulepatternjavascript)을 택했습니다.
@@ -137,16 +137,16 @@ React와 마찬가지로 컴포넌트 state를 추적합니다. (이 예제는 �
 ```jsx
 // Example 2 continued
 function Counter() {
-  const [count, setCount] = MyReact.useState(0)
+  const [count, setCount] = MyReact.useState(0);
   return {
     click: () => setCount(count + 1),
-    render: () => console.log("render:", { count }),
-  }
+    render: () => console.log('render:', { count }),
+  };
 }
-let App
-App = MyReact.render(Counter) // render: { count: 0 }
-App.click()
-App = MyReact.render(Counter) // render: { count: 1 }
+let App;
+App = MyReact.render(Counter); // render: { count: 0 }
+App.click();
+App = MyReact.render(Counter); // render: { count: 1 }
 ```
 
 React Hooks와 좀 더 비슷한 형태를 갖추었습니다.
@@ -163,59 +163,59 @@ Reack Hook의 첫번째 기초인 `useState`에 대해 배웠습니다. 다음�
 ```jsx
 // 예제 3
 const MyReact = (function() {
-  let _val, _deps // 이 렉시컬 스코프 안에 state값을 가지고 있습니다.
+  let _val, _deps; // 이 렉시컬 스코프 안에 state값을 가지고 있습니다.
   return {
     render(Component) {
-      const Comp = Component()
-      Comp.render()
-      return Comp
+      const Comp = Component();
+      Comp.render();
+      return Comp;
     },
     useEffect(callback, depArray) {
-      const hasNoDeps = !depArray
+      const hasNoDeps = !depArray;
       const hasChangedDeps = _deps
         ? !depArray.every((el, i) => el === _deps[i])
-        : true
+        : true;
       if (hasNoDeps || hasChangedDeps) {
-        callback()
-        _deps = depArray
+        callback();
+        _deps = depArray;
       }
     },
     useState(initialValue) {
-      _val = _val || initialValue
+      _val = _val || initialValue;
       function setState(newVal) {
-        _val = newVal
+        _val = newVal;
       }
-      return [_val, setState]
+      return [_val, setState];
     },
-  }
-})()
+  };
+})();
 
 // usage
 function Counter() {
-  const [count, setCount] = MyReact.useState(0)
+  const [count, setCount] = MyReact.useState(0);
   MyReact.useEffect(() => {
-    console.log("effect", count)
-  }, [count])
+    console.log('effect', count);
+  }, [count]);
   return {
     click: () => setCount(count + 1),
     noop: () => setCount(count),
-    render: () => console.log("render", { count }),
-  }
+    render: () => console.log('render', { count }),
+  };
 }
-let App
-App = MyReact.render(Counter)
+let App;
+App = MyReact.render(Counter);
 // effect 0
 // render {count: 0}
-App.click()
-App = MyReact.render(Counter)
+App.click();
+App = MyReact.render(Counter);
 // effect 1
 // render {count: 1}
-App.noop()
-App = MyReact.render(Counter)
+App.noop();
+App = MyReact.render(Counter);
 // // no effect run
 // render {count: 1}
-App.click()
-App = MyReact.render(Counter)
+App.click();
+App = MyReact.render(Counter);
 // effect 2
 // render {count: 2}
 ```
@@ -232,34 +232,34 @@ App = MyReact.render(Counter)
 // 예제 4
 const MyReact = (function() {
   let hooks = [],
-    currentHook = 0 // 배열 hooks과 정수
+    currentHook = 0; // 배열 hooks과 정수
   return {
     render(Component) {
-      const Comp = Component() // run effects
-      Comp.render()
-      currentHook = 0 // 다음 렌더를 위해 0으로 초기화한다.
-      return Comp
+      const Comp = Component(); // run effects
+      Comp.render();
+      currentHook = 0; // 다음 렌더를 위해 0으로 초기화한다.
+      return Comp;
     },
     useEffect(callback, depArray) {
-      const hasNoDeps = !depArray
-      const deps = hooks[currentHook] // 타입: array | undefined
+      const hasNoDeps = !depArray;
+      const deps = hooks[currentHook]; // 타입: array | undefined
       const hasChangedDeps = deps
         ? !depArray.every((el, i) => el === deps[i])
-        : true
+        : true;
       if (hasNoDeps || hasChangedDeps) {
-        callback()
-        hooks[currentHook] = depArray
+        callback();
+        hooks[currentHook] = depArray;
       }
-      currentHook++ // hook의 끝
+      currentHook++; // hook의 끝
     },
     useState(initialValue) {
-      hooks[currentHook] = hooks[currentHook] || initialValue // 타입: any
-      const setStateHookIndex = currentHook // setState 클로져
-      const setState = newState => (hooks[setStateHookIndex] = newState)
-      return [hooks[currentHook++], setState]
+      hooks[currentHook] = hooks[currentHook] || initialValue; // 타입: any
+      const setStateHookIndex = currentHook; // setState 클로져
+      const setState = newState => (hooks[setStateHookIndex] = newState);
+      return [hooks[currentHook++], setState];
     },
-  }
-})()
+  };
+})();
 ```
 
 `setStateHookIndex`는 아무것도 하지 않는 것 같지만 `currentHook` 변수에 `setState`가 갇히는 걸 방지합니다.
@@ -268,36 +268,36 @@ const MyReact = (function() {
 ```jsx
 // Example 4 속편 - 사용법
 function Counter() {
-  const [count, setCount] = MyReact.useState(0)
-  const [text, setText] = MyReact.useState("foo") // 2번째 hook
+  const [count, setCount] = MyReact.useState(0);
+  const [text, setText] = MyReact.useState('foo'); // 2번째 hook
   MyReact.useEffect(() => {
-    console.log("effect", count, text)
-  }, [count, text])
+    console.log('effect', count, text);
+  }, [count, text]);
   return {
     click: () => setCount(count + 1),
     type: txt => setText(txt),
     noop: () => setCount(count),
-    render: () => console.log("render", { count, text }),
-  }
+    render: () => console.log('render', { count, text }),
+  };
 }
-let App
-App = MyReact.render(Counter)
+let App;
+App = MyReact.render(Counter);
 // effect 0 foo
 // render {count: 0, text: 'foo'}
-App.click()
-App = MyReact.render(Counter)
+App.click();
+App = MyReact.render(Counter);
 // effect 1 foo
 // render {count: 1, text: 'foo'}
-App.type("bar")
-App = MyReact.render(Counter)
+App.type('bar');
+App = MyReact.render(Counter);
 // effect 1 bar
 // render {count: 1, text: 'bar'}
-App.noop()
-App = MyReact.render(Counter)
+App.noop();
+App = MyReact.render(Counter);
 // // no effect run
 // render {count: 1, text: 'bar'}
-App.click()
-App = MyReact.render(Counter)
+App.click();
+App = MyReact.render(Counter);
 // effect 2 bar
 // render {count: 2, text: 'bar'}
 ```
@@ -308,22 +308,22 @@ App = MyReact.render(Counter)
 ```jsx
 // Example 4, 재 방문
 function Component() {
-  const [text, setText] = useSplitURL("www.netlify.com")
+  const [text, setText] = useSplitURL('www.netlify.com');
   return {
     type: txt => setText(txt),
     render: () => console.log({ text }),
-  }
+  };
 }
 function useSplitURL(str) {
-  const [text, setText] = MyReact.useState(str)
-  const masked = text.split(".")
-  return [masked, setText]
+  const [text, setText] = MyReact.useState(str);
+  const masked = text.split('.');
+  return [masked, setText];
 }
-let App
-App = MyReact.render(Component)
+let App;
+App = MyReact.render(Component);
 // { text: [ 'www', 'netlify', 'com' ] }
-App.type("www.reactjs.org")
-App = MyReact.render(Component)
+App.type('www.reactjs.org');
+App = MyReact.render(Component);
 // { text: [ 'www', 'reactjs', 'org' ] }}
 ```
 

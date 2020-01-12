@@ -1,8 +1,8 @@
 ---
 slug: react-components-elements-and-instances
 date: 2019-08-12
-title: "React Components, Elements, and Instances"
-description: "[번역] React Components, Elements, and Instances"
+title: 'React Components, Elements, and Instances'
+description: '[번역] React Components, Elements, and Instances'
 published: true
 ---
 
@@ -28,33 +28,33 @@ published: true
 class Form extends TraditionalObjectOrientedView {
   render() {
     // Read some data passed to the view
-    const { isSubmitted, buttonText } = this.attrs
+    const { isSubmitted, buttonText } = this.attrs;
 
     if (!isSubmitted && !this.button) {
       // Form is not yet submitted. button 인스턴스 생성
       this.button = new Button({
         children: buttonText,
-        color: "blue",
-      })
-      this.el.appendChild(this.button.el)
+        color: 'blue',
+      });
+      this.el.appendChild(this.button.el);
     }
 
     if (this.button) {
       // The button is visible. Update its text!
-      this.button.attrs.children = buttonText
-      this.button.render()
+      this.button.attrs.children = buttonText;
+      this.button.render();
     }
 
     if (isSubmitted && this.button) {
       // Form was submitted. Destroy the button!
-      this.el.removeChild(this.button.el)
-      this.button.destroy()
+      this.el.removeChild(this.button.el);
+      this.button.destroy();
     }
 
     if (isSubmitted && !this.message) {
       // Form was submitted. Show the success message!
-      this.message = new Message({ text: "Success!" })
-      this.el.appendChild(this.message.el)
+      this.message = new Message({ text: 'Success!' });
+      this.el.appendChild(this.message.el);
     }
   }
 }
@@ -134,10 +134,10 @@ React 엘리먼트는 구문 분석할 필요가 없으며, 실제 DOM 엘리먼
 const DangerButton = ({ children }) => ({
   type: Button,
   props: {
-    color: "red",
+    color: 'red',
     children: children,
   },
-})
+});
 ```
 
 단일 엘리먼트 트리안에서 컴포넌트 엘리먼트와 DOM을 일치(match) 시키고 혼합할 수 있습니다.
@@ -175,7 +175,7 @@ const DeleteAccount = () => (
     <DangerButton>Yep</DangerButton>
     <Button color="blue">Cancel</Button>
   </div>
-)
+);
 ```
 
 혼합 및 매칭(matching)하는 것은 각각의 컴포넌트를 서로 분리하는데 도움을 줍니다. 구성만으로 *is-a*와 _has-a_ 관계를 모두 표현할 수 있기 때문입니다.
@@ -230,9 +230,9 @@ const Form = ({ isSubmitted, buttonText }) => {
     return {
       type: Message,
       props: {
-        text: "Success!",
+        text: 'Success!',
       },
-    }
+    };
   }
 
   // Form is still visible! Return a button element.
@@ -240,10 +240,10 @@ const Form = ({ isSubmitted, buttonText }) => {
     type: Button,
     props: {
       children: buttonText,
-      color: "blue",
+      color: 'blue',
     },
-  }
-}
+  };
+};
 ```
 
 끝입니다! React 컴포넌트에서 props는 입력 값이고 엘리먼트 트리는 출력 값입니다.
@@ -259,53 +259,53 @@ React로 인스턴스를 생성, 수정, 삭제를 해봤습니다. 컴포넌트
 ```jsx
 // 1) 함수를 사용하는 방법
 const Button = ({ children, color }) => ({
-  type: "button",
+  type: 'button',
   props: {
-    className: "button button-" + color,
+    className: 'button button-' + color,
     children: {
-      type: "b",
+      type: 'b',
       props: {
         children: children,
       },
     },
   },
-})
+});
 
 // 2) React.createClass()를 사용하는 방법
 const Button = React.createClass({
   render() {
-    const { children, color } = this.props
+    const { children, color } = this.props;
     return {
-      type: "button",
+      type: 'button',
       props: {
-        className: "button button-" + color,
+        className: 'button button-' + color,
         children: {
-          type: "b",
+          type: 'b',
           props: {
             children: children,
           },
         },
       },
-    }
+    };
   },
-})
+});
 
 // 3) React.Component class를 사용하는 방법
 class Button extends React.Component {
   render() {
-    const { children, color } = this.props
+    const { children, color } = this.props;
     return {
-      type: "button",
+      type: 'button',
       props: {
-        className: "button button-" + color,
+        className: 'button button-' + color,
         children: {
-          type: "b",
+          type: 'b',
           props: {
             children: children,
           },
         },
       },
-    }
+    };
   }
 }
 ```
@@ -326,11 +326,11 @@ ReactDOM.render(
     type: Form,
     props: {
       isSubmitted: false,
-      buttonText: "OK!",
+      buttonText: 'OK!',
     },
   },
-  document.getElementById("root")
-)
+  document.getElementById('root')
+);
 ```
 
 React는 `props`를 고려해서 `Form`컴포넌트에게 어떤 엘리먼트 트리를 반환할지 물어볼 것입니다. 이것은 점차적으로 더 원초적인 측면에서 컴포넌트 트리를 이해하는데 도움을 줄 것입니다.

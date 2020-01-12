@@ -1,9 +1,9 @@
 ---
 slug: reasons-to-maintain-immutability-with-react
-date: "2019-08-28"
-title: "React 상태가 불변성인 이유"
-banner: "./images/banner.png"
-description: "왜 React에서 상태 불변성을 권장할까?"
+date: '2019-08-28'
+title: 'React 상태가 불변성인 이유'
+banner: './images/banner.png'
+description: '왜 React에서 상태 불변성을 권장할까?'
 published: true
 ---
 
@@ -14,8 +14,8 @@ React를 처음 배우면 알아야 할 것 중 하나는 상태를 변경 불�
 JavaScript안에서 `String` 은 좋은 불변의 좋은 예제입니다. 만약 문자열을 정의할 경우 아래와 같습니다.
 
 ```javascript {numberLines: true}
-var str = "foo"
-str = "bar"
+var str = 'foo';
+str = 'bar';
 ```
 
 첫번째 구문이 실행되면 메모리에 문자열 `'foo'`가 생성되고 변수 `str`은 메모리에 생성된 문자열 `'foo'`의 메모리 주소를 가리킵니다.
@@ -23,8 +23,8 @@ str = "bar"
 이 같은 로직은 아래의 코드에도 동일하게 작동합니다.
 
 ```js
-var str = "foo"
-str[0] = "w"
+var str = 'foo';
+str[0] = 'w';
 ```
 
 `replace`나 `toUpperCase`, `slice`함수 모두 저장된 문자열을 변경하는 것이 아니라 내부에서 새로운 문자열을 생성하여 반환하는 것입니다.
@@ -34,14 +34,14 @@ str[0] = "w"
 
 ```js
 var obj = {
-  name: "foo",
-}
+  name: 'foo',
+};
 
-var newObj = obj
-obj.name = "bar"
+var newObj = obj;
+obj.name = 'bar';
 
-console.log(obj.name) // bar
-console.log(newObj.name) // bar
+console.log(obj.name); // bar
+console.log(newObj.name); // bar
 ```
 
 이는 `obj`와 `newObj`가 같은 주소를 참조하고 있어서 `obj`만 변경해도 `newObj`가 같이 변경됩니다.
@@ -64,9 +64,9 @@ class MyComponent extends Component {
   // ...
   shouldComponentUpdate(nextProps, nextState) {
     if (this.props.myProp !== nextProps.color) {
-      return true
+      return true;
     }
-    return false
+    return false;
   }
   // ...
 }
@@ -89,8 +89,8 @@ const modifyUser = (user, newName, newAddress) => {
     name: newName,
     age: user.age,
     address: newAddress,
-  }
-}
+  };
+};
 ```
 
 이렇게 모든 프로퍼티를 작성을 해줘야 하지만 객체 복사를 사용할 땐

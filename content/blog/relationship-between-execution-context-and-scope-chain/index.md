@@ -1,8 +1,8 @@
 ---
-date: "2019-12-07"
-title: "실행 컨텍스트와 스코프 체인의 관계"
-description: "스코프 체인을 설명할 때 실행 컨텍스트 개념을 알아야 하는 이유"
-banner: "./images/banner.jpg"
+date: '2019-12-07'
+title: '실행 컨텍스트와 스코프 체인의 관계'
+description: '스코프 체인을 설명할 때 실행 컨텍스트 개념을 알아야 하는 이유'
+banner: './images/banner.jpg'
 published: true
 ---
 

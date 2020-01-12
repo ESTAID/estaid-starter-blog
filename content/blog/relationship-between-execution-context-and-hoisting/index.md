@@ -1,8 +1,8 @@
 ---
-date: "2019-12-07"
-title: "실행 컨텍스트와 호이스팅의 관계"
-description: "호이스팅을 설명할 때 실행 컨텍스트 개념을 알아야 하는 이유"
-banner: "./images/banner.jpg"
+date: '2019-12-07'
+title: '실행 컨텍스트와 호이스팅의 관계'
+description: '호이스팅을 설명할 때 실행 컨텍스트 개념을 알아야 하는 이유'
+banner: './images/banner.jpg'
 published: true
 ---
 
@@ -86,7 +86,7 @@ foo(1);
 ```javascript
 function foo() {
   console.lob(b); // ?
-  var b = "b"; // 수집 대상 1
+  var b = 'b'; // 수집 대상 1
   console.log(b); // ?
   function b() {} // 수집 대상 2
   console.log(b); // ?
@@ -104,7 +104,7 @@ function foo() {
   function b() {}
 
   console.log(b); // function b() {};
-  b = "b";
+  b = 'b';
   console.log(b); // b
   console.log(b); // b
 }

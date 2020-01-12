@@ -1,8 +1,8 @@
 ---
-date: "2019-08-12"
-title: "memory-leak-with-react"
-description: "React에서 비 동기 호출 시 메모리 누수 줄이는 방법 with Hooks"
-banner: "./images/banner.jpg"
+date: '2019-08-12'
+title: 'memory-leak-with-react'
+description: 'React에서 비 동기 호출 시 메모리 누수 줄이는 방법 with Hooks'
+banner: './images/banner.jpg'
 published: true
 ---
 
@@ -10,24 +10,24 @@ published: true
 
 ```jsx
 function Child() {
-  const [state, setState] = React.useState("mount🙂")
+  const [state, setState] = React.useState('mount🙂');
   React.useEffect(() => {
     setTimeout(() => {
-      setState("update🙃")
-    }, 2000)
-  }, [])
+      setState('update🙃');
+    }, 2000);
+  }, []);
 
-  return <div>{state}</div>
+  return <div>{state}</div>;
 }
 
 function App() {
-  const [view, setView] = React.useState(false)
+  const [view, setView] = React.useState(false);
   const onShowClick = () => {
-    setView(true)
-  }
+    setView(true);
+  };
   const onHideClick = () => {
-    setView(false)
-  }
+    setView(false);
+  };
 
   return (
     <div className="App">
@@ -35,7 +35,7 @@ function App() {
       <button onClick={onHideClick}>Hide</button>
       {view && <Child />}
     </div>
-  )
+  );
 }
 ```
 
@@ -62,13 +62,13 @@ React.useEffect(() => {
 // Child Component
 React.useEffect(() => {
   const timer = setTimeout(() => {
-    setState("update🙃")
-  }, 2000)
+    setState('update🙃');
+  }, 2000);
 
   return () => {
-    clearTimeout(timer)
-  }
-}, [])
+    clearTimeout(timer);
+  };
+}, []);
 ```
 
 비 동기 호출의 예제를 위해 `setTimeout`를 사용했지만 서버에서 데이터를 가져올 경우에는 상황이 다릅니다. `axios`를 사용해서 데이터를 가져올 경우 콜백 함수를 비우는 `clearTimeout`이라는 함수가 없기 때문입니다.
@@ -78,18 +78,18 @@ React.useEffect(() => {
 ```jsx
 // Child Component
 React.useEffect(() => {
-  let isSubscribed = true
+  let isSubscribed = true;
 
   setTimeout(() => {
     if (isSubscribed) {
-      setState("update🙃")
+      setState('update🙃');
     }
-  }, 1000)
+  }, 1000);
 
   return () => {
-    isSubscribed = false
-  }
-}, [])
+    isSubscribed = false;
+  };
+}, []);
 ```
 
 로직이 돌아가는 과정을 설명하면, 기존 동작 과정은 동일하지만 `isSubscribed`라는 변수가 추가 되었습니다. `isSubscribed` 변수를 통해 `state` 상태 값을 변경할지 결정합니다. `unmount`가 되는 순간 `isSubscribed`는 `false`로 값이 변경되고 상태 값을 변경하지 않습니다.
