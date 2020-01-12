@@ -1,7 +1,7 @@
 ---
 date: '2020-01-12'
 title: '비동기 상태를 hooks과 redux를 사용하여 관리하는 방법'
-description: '[Advanced React] hooks와 redux의 조합'
+description: '[Advanced React] hooks와 redux의 조합해서 코드 양 줄이기'
 banner: './images/banner.jpeg'
 published: true
 ---
@@ -218,6 +218,8 @@ export const GlobalComponent = () => {
   );
 };
 ```
+
+### 결론
 
 이렇게 작성하면
 
