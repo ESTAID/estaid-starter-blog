@@ -1,7 +1,7 @@
 ---
 date: '2020-01-12'
-title: 'how-to-manage-asynchronous-state-using-hooks-and-redux'
-description: '[Advanced React] 비동기 상태를 hooks과 redux를 사용하여 관리하는 방법'
+title: '비동기 상태를 hooks과 redux를 사용하여 관리하는 방법'
+description: '[Advanced React] hooks와 redux의 조합'
 banner: './images/banner.jpeg'
 published: true
 ---
